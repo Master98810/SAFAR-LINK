@@ -1,0 +1,11 @@
+SAFAR LINK — لازمی تعیناتی چیک لسٹ
+
+1) کسی HTTPS hosting provider پر backend فولڈر deploy کریں (Node.js 22 یا Docker)۔
+2) Persistent disk/volume لازمی mount کریں، ورنہ data.json ری اسٹارٹ پر ضائع ہو سکتی ہے۔
+3) Environment variables مقرر کریں: NODE_ENV=production، PORT، ADMIN_KEY (کم از کم 32 حروف کا random secret)، PUBLIC_BASE_URL (آپ کا اصل HTTPS domain)۔
+4) ڈومین اور HTTPS فعال کریں؛ PUBLIC_BASE_URL عین اسی HTTPS origin کے برابر ہو۔
+5) Android project کو Android Studio میں کھولیں اور Gradle property SAFAR_BASE_URL=https://آپ-کا-اصل-ڈومین مقرر کریں۔
+6) Build > Generate Signed Bundle / APK سے signed APK بنائیں۔ Signing keystore محفوظ رکھیں۔
+7) کم از کم دو حقیقی Android فونز پر اجازت، اجازت سے انکار، لنک expiry، live updates، stop/revoke اور WhatsApp/IMO sharing ٹیسٹ کریں۔
+
+اہم: اس archive میں hosting account، domain، API credentials یا Android signing key شامل نہیں۔ ان کے بغیر عوامی HTTPS service یا قابلِ تقسیم signed APK بنانا ممکن نہیں۔

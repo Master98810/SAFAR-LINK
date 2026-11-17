@@ -1,0 +1,9 @@
+{
+  "name": "safar-link",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Consent-based location sharing web app and Android wrapper starter",
+  "main": "server.js",
+  "scripts": {"start": "node server.js"},
+  "dependencies": {"express": "^4.21.2"}
+}
