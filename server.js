@@ -335,4 +335,3 @@ app.listen(PORT, () => {
   console.log(`SAFAR LINK running on port ${PORT}`);
 });
 
-app.listen(PORT, () => console.log(`SAFAR LINK running on port ${PORT}`));
