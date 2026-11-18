@@ -1,5 +1,11 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#123b55"><link rel="manifest" href="/manifest.json"><title>SAFAR LINK</title><link rel="stylesheet" href="/style.css"></head>
+<!doctype html>
+<html lang="ur"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#123b55"><title>SAFAR LINK</title><link rel="stylesheet" href="/style.css"></head>
 <body><main class="wrap"><header><div class="falcon">🦅</div><div><h1>SAFAR LINK</h1><p>Secure location sharing</p></div></header>
-<section class="card"><h2>Create a location link</h2><label for="label">Link name</label><input id="label" value="My location" maxlength="60"><label for="duration">Link active for</label><select id="duration"><option value="30">30 minutes</option><option value="60" selected>1 hour</option><option value="180">3 hours</option><option value="720">12 hours</option><option value="1440">24 hours</option></select>
-<label for="admin">Administrator key</label><input id="admin" type="password" placeholder="Enter your private admin key"><button id="create">Create link</button><p class="hint">The recipient's location is shared only after they explicitly agree and grant GPS permission.</p><div id="result"></div></section>
-<footer>SAFAR LINK • Location is never accessed without permission</footer></main><script src="/home.js"></script></body></html>
+<section class="card"><h2>نیا لوکیشن لنک بنائیں</h2>
+<label for="label">نام / شناخت</label><input id="label" value="لوکیشن" maxlength="60">
+<label for="phone">فون نمبر (اختیاری)</label><input id="phone" type="tel" maxlength="30" placeholder="مثلاً 03XXXXXXXXX">
+<label for="duration">لنک کتنی دیر فعال رہے؟</label><select id="duration"><option value="30">30 منٹ</option><option value="60" selected>1 گھنٹہ</option><option value="180">3 گھنٹے</option><option value="720">12 گھنٹے</option><option value="1440">24 گھنٹے</option><option value="4320">3 دن</option><option value="10080">7 دن</option></select>
+<label for="admin">Administrator key</label><input id="admin" type="password" autocomplete="off" placeholder="اپنی خفیہ Admin Key درج کریں">
+<button id="create">لنک بنائیں</button><p class="hint">وصول کنندہ کی واضح اجازت اور GPS اجازت کے بغیر لوکیشن حاصل نہیں کی جائے گی۔</p><div id="result" aria-live="polite"></div>
+<h2>پہلے بنائے گئے لنکس</h2><button id="loadLinks" type="button" class="secondary">لنکس کی فہرست دیکھیں</button><div id="links"></div></section>
+<footer>SAFAR LINK • اجازت کے بغیر لوکیشن حاصل نہیں کی جاتی</footer></main><script src="/home.js"></script></body></html>
