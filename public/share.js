@@ -12,7 +12,7 @@ let consented = false;
     if (!r.ok) throw new Error(d.error || "Lien indisponible.");
 
     $("heading").textContent =
-      d.label + " — Demande de partage de localisation";
+  "Demande de partage de localisation";
   } catch (e) {
     $("status").textContent = e.message;
     $("allow").disabled = true;
