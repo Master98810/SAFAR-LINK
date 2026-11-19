@@ -5,9 +5,9 @@ async function refresh(){
  try{
   const r=await fetch(`/api/dashboard/${encodeURIComponent(sid)}?key=${encodeURIComponent(key||"")}`,{cache:"no-store"}),d=await r.json();if(!r.ok)throw new Error(d.error);
   $("label").textContent=`${d.label}${d.phone?" — "+d.phone:""}`;
-  const h=d.history||[],p=h[0]||d.location||null;
+  const h=Array.isArray(d.history)?d.history:[],p=h[0]||d.location||null;
   if(d.stopped)$("status").textContent="یہ شیئرنگ سیشن بند ہے۔ پرانی ہسٹری محفوظ ہے۔";
-  else if(p)$("status").textContent="لوکیشن موصول ہو گئی؛ آخری اپڈیٹ: "+new Date(p.recordedAt).toLocaleString("ur-PK");
+  else if(h.length||p)$("status").textContent="لوکیشن موصول ہو گئی؛ آخری اپڈیٹ: "+new Date(p.recordedAt).toLocaleString("ur-PK");
   else if(d.consent)$("status").textContent="اجازت مل گئی؛ GPS لوکیشن کا انتظار ہے…";
   else $("status").textContent="وصول کنندہ کی اجازت کا انتظار ہے…";
   if(p){
