@@ -1,47 +1,28 @@
-```html
-
 <!doctype html>
 <html lang="fr">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Partager la localisation — SAFAR LINK</title>
+  <meta name="theme-color" content="#123b55">
+  <title>Partager ma position — SAFAR LINK</title>
   <link rel="stylesheet" href="/style.css">
 </head>
 <body>
   <main class="wrap">
     <header>
-      <div class="falcon">🦅</div>
-      <div>
-        <h1>SAFAR LINK</h1>
-        <p>Demande de partage de localisation</p>
-      </div>
+      <div class="falcon" aria-hidden="true">🦅</div>
+      <div><h1>SAFAR LINK</h1><p>Demande de partage de position</p></div>
     </header>
-
     <section class="card">
-      <h2 id="heading">Demande de partage de localisation</h2>
-
-      <p>
-        Si vous donnez votre autorisation, les mises à jour de votre
-        position GPS seront envoyées au destinataire pendant la durée
-        définie pour ce lien. Vous pouvez arrêter le partage à tout
-        moment en appuyant sur « Arrêter le partage ».
-        Votre localisation ne sera jamais obtenue sans votre consentement.
-      </p>
-
-      <button id="allow">
-        J’accepte — Partager ma position
-      </button>
-
-      <button id="stop" class="danger" type="button" hidden>
-        Arrêter le partage
-      </button>
-
+      <h2 id="heading">Demande de partage de position</h2>
+      <p>Si vous acceptez, votre position GPS sera partagée pendant la durée prévue. Vous pouvez arrêter le partage à tout moment. Aucune position ne sera envoyée sans votre accord et l’autorisation de votre navigateur.</p>
+      <button id="allow" type="button">J’accepte — partager ma position</button>
+      <button id="locationSettings" type="button" hidden>Ouvrir les paramètres de localisation</button>
+      <button id="retry" type="button" hidden>Réessayer ma localisation</button>
+      <button id="stop" class="danger" type="button" hidden>Arrêter le partage</button>
       <p id="status" class="hint" aria-live="polite"></p>
     </section>
   </main>
-
   <script src="/share.js"></script>
 </body>
 </html>
-```
