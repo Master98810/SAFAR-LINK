@@ -1,3 +1,4 @@
+
 const express = require("express");
 const path = require("path");
 const crypto = require("crypto");
@@ -335,3 +336,25 @@ app.listen(PORT, () => {
   console.log(`SAFAR LINK running on port ${PORT}`);
 });
 
+
+
+// Native Android administrator API, using the existing Firestore sessions collection.
+function androidSession(s) { return { sessionId: s.sessionId, label: s.label, phone: s.phone || "", createdAt: s.createdAt, expiresAt: s.expiresAt, consent: !!s.consent, stopped: !!s.stopped, lastUpdate: s.lastUpdate || null, location: s.location || null }; }
+app.get("/api/sessions", adminAuth, async (_req, res) => {
+  try { const snap = await sessions.orderBy("createdAt", "desc").limit(200).get(); res.json({ sessions: snap.docs.map(doc => androidSession(doc.data())) }); }
+  catch (error) { console.error(error); res.status(500).json({ error: "لنکس کی فہرست حاصل نہیں ہو سکی۔" }); }
+});
+app.get("/api/sessions/:id/history", adminAuth, async (req, res) => {
+  try { const ref = sessions.doc(req.params.id); const snap = await ref.get(); if (!snap.exists) return res.status(404).json({ error: "یہ ریکارڈ موجود نہیں۔" });
+    const hs = await ref.collection("history").limit(500).get(); const history = hs.docs.map(doc => { const p = doc.data(); return { recordId: doc.id, ...p, recordedAt: p.recordedAt || p.receivedAt || null }; }).sort((a,b) => (b.recordedAt || 0) - (a.recordedAt || 0));
+    res.json({ session: androidSession(snap.data()), history });
+  } catch (error) { console.error(error); res.status(500).json({ error: "لوکیشن ہسٹری حاصل نہیں ہو سکی۔" }); }
+});
+app.post("/api/sessions/:id/stop", adminAuth, async (req, res) => {
+  try { const ref = sessions.doc(req.params.id); const snap = await ref.get(); if (!snap.exists) return res.status(404).json({ error: "یہ ریکارڈ موجود نہیں۔" }); await ref.update({ stopped: true, consent: false, stoppedAt: Date.now() }); res.json({ ok: true }); }
+  catch (error) { console.error(error); res.status(500).json({ error: "سیشن بند نہیں ہو سکا۔" }); }
+});
+app.delete("/api/sessions/:id", adminAuth, async (req, res) => {
+  try { const ref = sessions.doc(req.params.id); const snap = await ref.get(); if (!snap.exists) return res.status(404).json({ error: "یہ ریکارڈ موجود نہیں۔" }); await admin.firestore().recursiveDelete(ref); res.json({ ok: true }); }
+  catch (error) { console.error(error); res.status(500).json({ error: "ریکارڈ حذف نہیں ہو سکا۔" }); }
+});
