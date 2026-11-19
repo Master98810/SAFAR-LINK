@@ -1,3 +1,4 @@
+
 const token = location.pathname.split("/").pop();
 const $ = id => document.getElementById(id);
 let watchId = null;
@@ -17,7 +18,7 @@ for (const [id, text] of [["locationSettings", "Ouvrir les paramètres de locali
     const response = await fetch("/api/share/" + encodeURIComponent(token));
     const data = await response.json();
     if (!response.ok) throw new Error("Ce lien n’est plus disponible ou a expiré.");
-    $("heading").textContent = data.label + " — demande de partage de position";
+        $("heading").textContent = "Demande de partage de position";
   } catch (error) {
     $("status").textContent = error.message || "Impossible de charger cette demande.";
     $("allow").disabled = true;
