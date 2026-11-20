@@ -6,7 +6,7 @@ $("create").onclick = async () => {
   const r=await fetch("/api/sessions",{method:"POST",headers:{"Content-Type":"application/json","x-admin-key":$("admin").value},body:JSON.stringify({label:$("label").value,phone:$("phone").value,durationMinutes:$("duration").value})});
   const d=await r.json(); if(!r.ok) throw new Error(d.error||"خرابی پیش آئی");
   out.innerHTML=`<h3>لنک بن گیا</h3><p>شیئر لنک:</p><p><a href="${escapeHtml(d.shareUrl)}" target="_blank" rel="noopener">${escapeHtml(d.shareUrl)}</a></p><button id="wa">WhatsApp پر بھیجیں</button><p>آپ کا نجی ڈیش بورڈ:</p><p><a href="${escapeHtml(d.dashboardUrl)}" target="_blank" rel="noopener">ڈیش بورڈ کھولیں</a></p><p class="hint">ڈیش بورڈ کا لنک خفیہ رکھیں۔</p>`;
-  $("wa").onclick=()=>{const text="براہِ کرم یہ لنک کھولیں اور اپنی مرضی سے لوکیشن شیئر کرنے کی اجازت دیں: "+d.shareUrl;window.open("https://wa.me/?text="+encodeURIComponent(text),"_blank","noopener");};
+  $("wa").onclick=()=>{const text="Veuillez ouvrir ce lien et autoriser le partage de votre position si vous le souhaitez : "+d.shareUrl;window.open("https://wa.me/?text="+encodeURIComponent(text),"_blank","noopener");};
   loadLinks();
  }catch(e){out.textContent=e.message;}finally{btn.disabled=false;}
 };
