@@ -1,4 +1,3 @@
-
 const token = location.pathname.split("/").pop();
 const $ = id => document.getElementById(id);
 let watchId = null;
@@ -38,35 +37,82 @@ function showLocationError(error) {
     $("locationSettings").hidden = !/Android/i.test(navigator.userAgent);
   }
 }
-function startLocationWatch() {
-  if (!navigator.geolocation) {
-    $("status").textContent = "La géolocalisation n’est pas disponible dans ce navigateur."; $("retry").hidden = false; return;
-  }
-  $("retry").hidden = true; $("locationSettings").hidden = true;
-  $("status").textContent = "Recherche de votre position… Autorisez l’accès si votre navigateur le demande.";
-  watchId = navigator.geolocation.watchPosition(async position => {
-    try {
-      const response = await fetch("/api/share/" + encodeURIComponent(token) + "/location", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ latitude: position.coords.latitude, longitude: position.coords.longitude, accuracy: position.coords.accuracy }) });
-      if (!response.ok) throw new Error("Votre position n’a pas pu être enregistrée.");
-      $("stop").hidden = false; $("retry").hidden = true; $("locationSettings").hidden = true;
-      $("status").textContent = "Votre position est partagée. Vous pouvez arrêter le partage à tout moment.";
-    } catch (error) { $("status").textContent = error.message || "Une erreur est survenue pendant le partage."; }
+async function sendLocation(position) {
+  const response = await fetch("/api/share/" + encodeURIComponent(token) + "/location", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      latitude: position.coords.latitude,
+      longitude: position.coords.longitude,
+      accuracy: position.coords.accuracy
+    })
+  });
+  if (!response.ok) throw new Error("Votre position n’a pas pu être enregistrée.");
+  $("stop").hidden = false;
+  $("retry").hidden = true;
+  $("locationSettings").hidden = true;
+  $("status").textContent = "Votre position est partagée. Vous pouvez arrêter le partage à tout moment.";
+}
+
+function startPositionWatch() {
+  if (watchId !== null) navigator.geolocation.clearWatch(watchId);
+  watchId = navigator.geolocation.watchPosition(position => {
+    sendLocation(position).catch(error => {
+      $("status").textContent = error.message || "Une erreur est survenue pendant le partage.";
+    });
   }, showLocationError, { enableHighAccuracy: true, maximumAge: 5000, timeout: 15000 });
 }
-$("allow").onclick = async () => {
-  $("allow").disabled = true; $("status").textContent = "Enregistrement de votre accord…";
-  try {
-    const response = await fetch("/api/share/" + encodeURIComponent(token) + "/consent", { method: "POST" });
-    if (!response.ok) throw new Error("Votre accord n’a pas pu être enregistré. Veuillez réessayer.");
-    consented = true; $("allow").hidden = true; startLocationWatch();
-  } catch (error) { $("status").textContent = error.message || "Impossible d’enregistrer votre accord."; $("allow").disabled = false; }
+
+function startLocationWatch() {
+  if (!navigator.geolocation) {
+    $("status").textContent = "La géolocalisation n’est pas disponible dans ce navigateur.";
+    $("retry").hidden = false;
+    $("allow").disabled = false;
+    return;
+  }
+  $("retry").hidden = true;
+  $("locationSettings").hidden = true;
+  $("status").textContent = "Recherche de votre position… Autorisez l’accès si votre navigateur le demande.";
+
+  // Request location directly from the user's button press. This lets an already
+  // authorized browser return a fix immediately and shows the browser prompt only
+  // when permission has not yet been granted.
+  navigator.geolocation.getCurrentPosition(async position => {
+    try {
+      if (!consented) {
+        const consentResponse = await fetch("/api/share/" + encodeURIComponent(token) + "/consent", { method: "POST" });
+        if (!consentResponse.ok) throw new Error("Votre accord n’a pas pu être enregistré. Veuillez réessayer.");
+        consented = true;
+        $("allow").hidden = true;
+      }
+      await sendLocation(position);
+      startPositionWatch();
+    } catch (error) {
+      $("status").textContent = error.message || "Une erreur est survenue pendant le partage.";
+      $("retry").hidden = false;
+      if (!consented) {
+        $("allow").hidden = false;
+        $("allow").disabled = false;
+      }
+    }
+  }, error => {
+    showLocationError(error);
+    if (!consented) {
+      $("allow").hidden = false;
+      $("allow").disabled = false;
+    }
+  }, { enableHighAccuracy: true, maximumAge: 5000, timeout: 15000 });
+}
+$("allow").onclick = () => {
+  $("allow").disabled = true;
+  startLocationWatch();
 };
 $("locationSettings").onclick = () => {
   $("status").textContent = "Activez la localisation dans les paramètres qui s’ouvrent. Revenez ensuite sur cette page et appuyez sur « Réessayer ma localisation ».";
   const fallback = encodeURIComponent(location.href);
   window.location.href = "intent:#Intent;action=android.settings.LOCATION_SOURCE_SETTINGS;category=android.intent.category.BROWSABLE;S.browser_fallback_url=" + fallback + ";end";
 };
-$("retry").onclick = () => { if (consented) startLocationWatch(); };
+$("retry").onclick = () => { startLocationWatch(); };
 $("stop").onclick = async () => {
   $("stop").disabled = true; if (watchId !== null && navigator.geolocation) navigator.geolocation.clearWatch(watchId); watchId = null;
   try {
